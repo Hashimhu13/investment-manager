@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard">
+    <h1>Investment Dashboard</h1>
+    
+    <div class="summary-cards">
+        <div class="card">
+            <h3>Total Investments</h3>
+            <p>{{ stats.total_investments }}</p>
+        </div>
+        <div class="card">
+            <h3>Total Value</h3>
+            <p>${{ "%.2f"|format(stats.total_value) }}</p>
+        </div>
+        <div class="card">
+            <h3>Average ROI</h3>
+            <p>{{ "%.2f"|format(stats.average_roi) }}%</p>
+        </div>
+    </div>
+
+    <div class="investments-list">
+        <h2>Your Investments</h2>
+        {% if investments %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Initial Amount</th>
+                    <th>Current Value</th>
+                    <th>ROI</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for investment in investments %}
+                <tr>
+                    <td>{{ investment.name }}</td>
+                    <td>${{ "%.2f"|format(investment.amount) }}</td>
+                    <td>${{ "%.2f"|format(investment.current_value) }}</td>
+                    <td>{{ "%.2f"|format(investment.calculate_roi()) }}%</td>
+                    <td>{{ investment.start_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ investment.end_date.strftime('%Y-%m-%d') if investment.end_date else 'Ongoing' }}</td>
+                    <td>
+                        <button onclick="showUpdateForm({{ investment.id }})">Update</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No investments yet. <a href="{{ url_for('main.add_investment') }}">Add your first investment</a> to get started!</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
